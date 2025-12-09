@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RNMSO_Library_Bot": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "RNMSO_LIBRARY_BOT": "C:\\Users\\lsnkv\\AppData\\Local\\RNMSO_Library_Bot"
+      }
+    }
+  }
+}
