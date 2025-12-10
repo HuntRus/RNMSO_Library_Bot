@@ -1,20 +1,24 @@
-﻿namespace RNMSO_Library_Bot;
+﻿using System.Text.Json;
 
-internal static class Configuration
+namespace RNMSO_Library_Bot;
+
+public static class Configuration
 {
-    internal static string Token { get; }
+    private static readonly string _filePath =
+        Path.Combine(Environment.GetEnvironmentVariable("RNMSO_LIBRARY_BOT"), "config.json");
+
+    public static string Token { get; }
 
     static Configuration()
     {
-        var specialFolder = Environment.SpecialFolder.LocalApplicationData;
-        var folderPath = Path.Combine(Environment.GetFolderPath(specialFolder), "RNMSO_Library_Bot");
-        var configPath = Path.Combine(folderPath, "config.txt");
-        if (!Directory.Exists(folderPath) || !File.Exists(configPath))
-        {
-            Directory.CreateDirectory(folderPath);
-            File.Create(configPath);
-        }
+        var file = File.ReadAllText(_filePath);
+        var configuration = JsonSerializer.Deserialize<Model>(file);
 
-        Token = File.ReadAllText(configPath);
+        Token = configuration!.Token;
+    }
+
+    public class Model
+    {
+        public required string Token { get; set; }
     }
 }
