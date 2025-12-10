@@ -4,43 +4,78 @@ namespace RNMSO_Library_Bot;
 
 public static class User
 {
-    private static readonly string _folderPath = 
+    private static readonly string _folderPath =
         Path.Combine(Environment.GetEnvironmentVariable("RNMSO_LIBRARY_BOT")!, "Users");
 
-    public static bool IsExists(long id)
-        => File.Exists(Path.Combine(_folderPath, $"{id}.json"));
-
-    public static Model? GetUser(string phoneNumber)
+    private static List<Model>? UsersList
     {
-        var filePath = Path.Combine(_folderPath, $"{phoneNumber}.json");
-        var file = File.ReadAllText(filePath);
-
-        var user = JsonSerializer.Deserialize<Model>(file);
-
-        return user;
-    }
-
-    public static Model AddUser(long id, string phoneNumber, string group)
-    {
-        var filePath = Path.Combine(_folderPath, $"{id}.json");
-        var user = new Model()
+        get
         {
-            Id = id,
-            PhoneNumber = phoneNumber,
-            Group = group
-        };
+            var users = new List<Model>();
 
-        File.WriteAllText(filePath, JsonSerializer.Serialize(user));
+            var files = Directory.GetFiles(_folderPath);
+            foreach (var file in files)
+            {
+                var jsonData = File.ReadAllText(file);
+                var userData = JsonSerializer.Deserialize<Model>(jsonData);
+                users.Add(userData);
+            }
 
+            return users;
+        }
+    }
+
+    public static Model? Get(string phoneNumber)
+    {
+        var user = UsersList.Find(x => x.PhoneNumber == phoneNumber);
         return user;
     }
 
-    public static void RemoveUser(string phoneNumber)
-        => File.Delete(Path.Combine(_folderPath, $"{phoneNumber}.json"));
+    public static Model? Get(long id)
+    {
+        var user = UsersList.Find(x => x.Id == id);
+        return user;
+    }
+
+    public static Model? Add(string phoneNumber, string group)
+    {
+        var user = new Model() { PhoneNumber = phoneNumber, Group = group };
+
+        var jsonData = JsonSerializer.Serialize(user);
+        File.WriteAllText($"{_folderPath}\\{phoneNumber}.json", jsonData);
+        return user;
+    }
+
+    public static Model? EditId(string phoneNumber, long id)
+    {
+        var user = Get(phoneNumber);
+        user.Id = id;
+
+        var jsonData = JsonSerializer.Serialize(user);
+        File.WriteAllText($"{_folderPath}\\{phoneNumber}.json", jsonData);
+        return user;
+    }
+
+    public static Model? EditGroup(string phoneNumber, string group)
+    {
+        var user = Get(phoneNumber);
+        user.Group = group;
+
+        var jsonData = JsonSerializer.Serialize(user);
+        File.WriteAllText($"{_folderPath}\\{phoneNumber}.json", jsonData);
+        return user;
+    }
+
+    public static void Remove(string phoneNumber)
+    {
+        var user = Get(phoneNumber);
+        if (user != null)
+            File.Delete($"{_folderPath}\\{phoneNumber}.json");
+    }
 
     public class Model
     {
-        public required long Id { get; set; }
+        public long Id { get; set; }
         public required string PhoneNumber { get; set; }
         public required string Group { get; set; }
     }
