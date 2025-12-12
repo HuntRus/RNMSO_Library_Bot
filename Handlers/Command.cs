@@ -44,6 +44,18 @@ public static partial class Handlers
                 "Необходимо вводить номер телефона <i>начиная с цифры 7 и без знака + перед ним: </i>" +
                 "<i>79123456789</i>", ParseMode.Html);
         }
+        else if (User.GroupList.Contains(arguments[2]) == false)
+        {
+            await bot.SendMessage(message.Chat, "<b>Вид доступа введён некорректно</b>\n" +
+                "Необходимо ввести один из следующих вариантов:\n" +
+                "<code>FirstViolin</code>, <code>SecondViolin </code>, " +
+            "<code>Viola</code>, <code>Cello</code>, " +
+            "<code>Contrabass</code>, <code>Flute</code>, " +
+            "<code>Oboe</code>, <code>Clarinet</code>, " +
+            "<code>Bassoon</code>, <code>Horn</code>, " +
+            "<code>Trumpet</code>, <code>TromboneAndTuba</code>, " +
+            "<code>Percussion</code>, <code>HarpAndKeyboard</code>, <code>OtherInstruments</code>\n\n", ParseMode.Html);
+        }
         else
         {
             User.Add(arguments[1], arguments[2]);
@@ -71,6 +83,18 @@ public static partial class Handlers
             await bot.SendMessage(message.Chat, "<b>Номер телефона введён некорректно</b>\n" +
                 "Необходимо вводить номер телефона <i>начиная с цифры 7 и без знака + перед ним: </i>" +
                 "<i>79123456789</i>", ParseMode.Html);
+        }
+        else if (User.GroupList.Contains(arguments[2]) == false)
+        {
+            await bot.SendMessage(message.Chat, "<b>Вид доступа введён некорректно</b>\n" +
+                "Необходимо ввести один из следующих вариантов:\n" +
+                "<code>FirstViolin</code>, <code>SecondViolin </code>, " +
+            "<code>Viola</code>, <code>Cello</code>, " +
+            "<code>Contrabass</code>, <code>Flute</code>, " +
+            "<code>Oboe</code>, <code>Clarinet</code>, " +
+            "<code>Bassoon</code>, <code>Horn</code>, " +
+            "<code>Trumpet</code>, <code>TromboneAndTuba</code>, " +
+            "<code>Percussion</code>, <code>HarpAndKeyboard</code>, <code>OtherInstruments</code>\n\n", ParseMode.Html);
         }
         else
         {
