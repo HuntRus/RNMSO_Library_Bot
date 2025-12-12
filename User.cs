@@ -75,7 +75,7 @@ public static class User
 
     public class Model
     {
-        public long Id { get; set; }
+        public long Id { get; set; } = default;
         public required string PhoneNumber { get; set; }
         public required string Group { get; set; }
     }

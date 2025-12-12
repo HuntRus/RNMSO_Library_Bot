@@ -5,8 +5,17 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RNMSO_Library_Bot.Handlers;
 
+/// <summary>
+/// <inheritdoc cref="RNMSO_Library_Bot.Handlers.Handlers"/>
+/// </summary>
 public static partial class Handlers
 {
+    /// <summary>
+    /// Process message from a user.
+    /// </summary>
+    /// <param name="bot">Current bot instance</param>
+    /// <param name="message">Message being processed</param>
+    /// <returns></returns>
     public static async Task HandleMessageAsync(TelegramBotClient bot, Message message)
     {
         var id = message.From!.Id;
@@ -40,19 +49,25 @@ public static partial class Handlers
 
             if (userByNumber != null)
             {
-                User.EditId(phoneNumber, id);
-                await bot.SendMessage(message.Chat, "Верификация прошла успешно, вам предоставлен доступ к библиотеке.",
-                    replyMarkup: new ReplyKeyboardRemove());
+                if (userByNumber.Id == default)
+                {
+                    User.EditId(phoneNumber, id);
+                    await bot.SendMessage(message.Chat, "<b>Доступ предоставлен</b>\n" +
+                        "Верификация пройдена, теперь вы можете воспользоваться функционалом чат-бота.\n", ParseMode.Html,
+                        replyMarkup: new ReplyKeyboardRemove());
+                }
+                else
+                {
+                    await bot.SendMessage(message.Chat, "<b>В доступе отказано</b>\n" +
+                        "Данный номер телефона привязан к другому аккаунту, нажмите на кнопку «Предоставить данные».\n" +
+                        "Если вы снова увидите это сообщение - обратитесь к администратору.", ParseMode.Html);
+                }
             }
             else
             {
-                var answer = await bot.SendMessage(message.Chat, "К сожалению, вам отказано в доступе. Ваш номер не добавлен в базу, обратитесь к администратору и повторите попытку.");
-
-                await Task.Delay(10000);
-                await bot.DeleteMessage(answer.Chat, answer.MessageId);
+                await bot.SendMessage(message.Chat, "<b>В доступе отказано</b>\n" +
+                    "Ваш номер телефона в базе не найден, обратитесь к администратору и повторите попытку.", ParseMode.Html);
             }
         }
-
-        await bot.DeleteMessage(message.Chat, message.Id);
     }
 }
