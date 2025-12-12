@@ -44,7 +44,7 @@ public static partial class Handlers
         }
         else if (message.Contact != null && userById == null)
         {
-            var phoneNumber = message.Contact.PhoneNumber;
+            var phoneNumber = message.Contact.PhoneNumber.StartsWith('+') ? message.Contact.PhoneNumber[1..] : message.Contact.PhoneNumber;
             var userByNumber = User.Get(phoneNumber);
 
             if (userByNumber != null)

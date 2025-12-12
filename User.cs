@@ -18,7 +18,7 @@ public static class User
             {
                 var jsonData = File.ReadAllText(file);
                 var userData = JsonSerializer.Deserialize<Model>(jsonData);
-                users.Add(userData);
+                users.Add(userData!);
             }
 
             return users;
