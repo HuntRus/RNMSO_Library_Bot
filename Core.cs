@@ -22,6 +22,6 @@ async Task OnUpdate(Update update)
     => await Handlers.HandleUpdateAsync(bot, update);
 
 async Task OnMessage(Message message, UpdateType type)
-    => await Handlers.HandleMessageAsync(bot, message, type);
+    => await Handlers.HandleMessageAsync(bot, message);
 
 Console.ReadLine();

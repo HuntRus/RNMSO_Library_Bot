@@ -5,9 +5,9 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace RNMSO_Library_Bot.Handlers;
 
-internal static partial class Handlers
+public static partial class Handlers
 {
-    internal static async Task HandleMessageAsync(TelegramBotClient bot, Message message, UpdateType type)
+    public static async Task HandleMessageAsync(TelegramBotClient bot, Message message)
     {
         var id = message.From!.Id;
         var userById = User.Get(id);
@@ -24,6 +24,9 @@ internal static partial class Handlers
 
                 else if (message.Text.StartsWith("/removeuser"))
                     await RemoveUserAsync(bot, message);
+
+                else if (message.Text.StartsWith("/help"))
+                    await HelpAsync(bot, message);
             }
             else if (message.Text == "/start")
             {
