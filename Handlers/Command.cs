@@ -125,11 +125,11 @@ public static partial class Handlers
             "На данный момент доступны группы " +
             "<code>FirstViolin</code>, <code>SecondViolin</code>, " +
             "<code>Viola</code>, <code>Cello</code>, " +
-            "<code>Doublebass</code>, <code>Flute</code>, " +
+            "<code>Contrabass</code>, <code>Flute</code>, " +
             "<code>Oboe</code>, <code>Clarinet</code>, " +
-            "<code>Bassoon</code>, <code>Frenchhorn</code>, " +
-            "<code>Trumpet</code>, <code>TromboneAndTourist</code>, " +
-            "<code>Drummer</code>, <code>HarpKeyboardist</code>\n\n" +
+            "<code>Bassoon</code>, <code>Horn</code>, " +
+            "<code>Trumpet</code>, <code>TromboneAndTuba</code>, " +
+            "<code>Percussion</code>, <code>HarpAndKeyboard</code>, <code>OtherInstruments</code>\n\n" +
             "<b>Список доступных команд</b>\n\n" +
             "• <code>/adduser &lt;номер телефона&gt; &lt;группа&gt;</code>\n" +
             "<i>Добавить пользователя в базу</i>\n\n" +
