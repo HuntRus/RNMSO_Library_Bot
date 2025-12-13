@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Collections.Generic;
 
 namespace RNMSO_Library_Bot;
 
@@ -24,6 +25,9 @@ public static class User
             return users;
         }
     }
+
+    public static readonly List<string> GroupList = ["FirstViolin", "SecondViolin", "Viola", "Cello", "Contrabass",
+        "Flute", "Oboe", "Clarinet", "Bassoon", "Horn", "Trumpet", "TromboneAndTuba", "Percussion", "HarpAndKeyboard","OtherInstruments"];
 
     public static Model? Get(string phoneNumber)
     {
