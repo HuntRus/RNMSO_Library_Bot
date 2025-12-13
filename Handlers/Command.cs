@@ -19,9 +19,9 @@ public static partial class Handlers
     public static async Task StartAsync(TelegramBotClient bot, Message message)
     {
         await bot.SendMessage(message.Chat,
-                        "<b>Добро пожаловать в чат-бот библиотеки Российского национального молодёжного симфонического оркестра!</b>\n\n" +
-                        "Для получения доступа к библиотеке Вам необходимо предоставить <i>номер телефона, привязанный к вашему аккаунту в Telegram.</i>", ParseMode.Html,
-                        replyMarkup: new KeyboardButton[] { KeyboardButton.WithRequestContact("✉️ Предоставить данные") });
+            "<b>Добро пожаловать в чат-бот библиотеки Российского национального молодёжного симфонического оркестра!</b>\n\n" +
+            "Для получения доступа к библиотеке Вам необходимо предоставить <i>номер телефона, привязанный к вашему аккаунту в Telegram.</i>", ParseMode.Html,
+            replyMarkup: new KeyboardButton[] { KeyboardButton.WithRequestContact("✉️ Предоставить данные") });
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public static partial class Handlers
         if (arguments.Length != 3)
         {
             await bot.SendMessage(message.Chat, "<b>Команда введена неверно</b>\n" +
-                            "Введите команду в формате:\n<code>/adduser &lt;номер телефона&gt &lt;группа&gt;</code>", ParseMode.Html);
+                "Введите команду в формате:\n<code>/adduser &lt;номер телефона&gt &lt;группа&gt;</code>", ParseMode.Html);
         }
         else if (arguments[1].StartsWith('+') || arguments[1].Length != 11)
         {
@@ -46,15 +46,8 @@ public static partial class Handlers
         }
         else if (User.GroupList.Contains(arguments[2]) == false)
         {
-            await bot.SendMessage(message.Chat, "<b>Вид доступа введён некорректно</b>\n" +
-                "Необходимо ввести один из следующих вариантов:\n" +
-                "<code>FirstViolin</code>, <code>SecondViolin </code>, " +
-            "<code>Viola</code>, <code>Cello</code>, " +
-            "<code>Contrabass</code>, <code>Flute</code>, " +
-            "<code>Oboe</code>, <code>Clarinet</code>, " +
-            "<code>Bassoon</code>, <code>Horn</code>, " +
-            "<code>Trumpet</code>, <code>TromboneAndTuba</code>, " +
-            "<code>Percussion</code>, <code>HarpAndKeyboard</code>, <code>OtherInstruments</code>\n\n", ParseMode.Html);
+            await bot.SendMessage(message.Chat, "<b>Неверно указана группа</b>\n" +
+                "Ознакомиться с полным списком групп можно с помощью команды /start.", ParseMode.Html);
         }
         else
         {
@@ -76,7 +69,7 @@ public static partial class Handlers
         if (arguments.Length != 3)
         {
             await bot.SendMessage(message.Chat, "<b>Команда введена неверно</b>\n" +
-                            "Введите команду в формате:\n<code>/editusergroup &lt;номер телефона&gt; &lt;новая группа&gt;</code>", ParseMode.Html);
+                "Введите команду в формате:\n<code>/editusergroup &lt;номер телефона&gt; &lt;новая группа&gt;</code>", ParseMode.Html);
         }
         else if (arguments[1].StartsWith('+') || arguments[1].Length != 11)
         {
@@ -86,15 +79,8 @@ public static partial class Handlers
         }
         else if (User.GroupList.Contains(arguments[2]) == false)
         {
-            await bot.SendMessage(message.Chat, "<b>Вид доступа введён некорректно</b>\n" +
-                "Необходимо ввести один из следующих вариантов:\n" +
-                "<code>FirstViolin</code>, <code>SecondViolin </code>, " +
-            "<code>Viola</code>, <code>Cello</code>, " +
-            "<code>Contrabass</code>, <code>Flute</code>, " +
-            "<code>Oboe</code>, <code>Clarinet</code>, " +
-            "<code>Bassoon</code>, <code>Horn</code>, " +
-            "<code>Trumpet</code>, <code>TromboneAndTuba</code>, " +
-            "<code>Percussion</code>, <code>HarpAndKeyboard</code>, <code>OtherInstruments</code>\n\n", ParseMode.Html);
+            await bot.SendMessage(message.Chat, "<b>Неверно указана группа</b>\n" +
+                "Ознакомиться с полным списком групп можно с помощью команды /start.", ParseMode.Html);
         }
         else
         {
