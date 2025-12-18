@@ -36,6 +36,9 @@ public static partial class Handlers
 
                 else if (message.Text.StartsWith("/help"))
                     await HelpAsync(bot, message);
+
+                else if (message.Text == "/start")
+                    await MenuAsync(bot, message);
             }
             else if (message.Text == "/start")
             {

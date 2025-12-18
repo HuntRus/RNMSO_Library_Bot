@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using System.Globalization;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -22,6 +23,31 @@ public static partial class Handlers
             "<b>Добро пожаловать в чат-бот библиотеки Российского национального молодёжного симфонического оркестра!</b>\n\n" +
             "Для получения доступа к библиотеке Вам необходимо предоставить <i>номер телефона, привязанный к вашему аккаунту в Telegram.</i>", ParseMode.Html,
             replyMarkup: new KeyboardButton[] { KeyboardButton.WithRequestContact("✉️ Предоставить данные") });
+    }
+
+    /// <summary>
+    /// Sends a menu.
+    /// </summary>
+    /// <param name="bot">Current bot instance</param>
+    /// <param name="message">Message being processed</param>
+    /// <returns></returns>
+    public static async Task MenuAsync(TelegramBotClient bot, Message message)
+    {
+        var now = DateTime.Now;
+
+        var currentMonth = now.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-ru"));
+        var nextMonth = now.AddMonths(1).ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-ru"));
+
+        var currentMonthString = char.ToUpper(currentMonth[0]) + currentMonth[1..];
+        var nextMonthString = char.ToUpper(nextMonth[0]) + nextMonth[1..];
+
+        await bot.SendMessage(message.Chat,
+            "Выберите месяц", ParseMode.Html,
+            replyMarkup: new InlineKeyboardButton[][]
+            {
+                [(currentMonthString, "CurrentMonth")],
+                [(nextMonthString, "NextMonth")]
+            });
     }
 
     /// <summary>
@@ -52,6 +78,8 @@ public static partial class Handlers
         else
         {
             User.Add(arguments[1], arguments[2]);
+
+            // check for null
 
             await bot.SendMessage(message.Chat, $"<b>Пользователь <code>{arguments[1]}</code> добавлен в базу.</b>", ParseMode.Html);
         }

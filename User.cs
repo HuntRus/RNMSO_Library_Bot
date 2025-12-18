@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Collections.Generic;
 
 namespace RNMSO_Library_Bot;
 
@@ -26,38 +25,31 @@ public static class User
         }
     }
 
-    public static readonly List<string> GroupList = ["FirstViolin", "SecondViolin", "Viola", "Cello", "Contrabass",
-        "Flute", "Oboe", "Clarinet", "Bassoon", "Horn", "Trumpet", "TromboneAndTuba", "Percussion", "HarpAndKeyboard","OtherInstruments"];
+    public static readonly List<string> GroupList = [ "FirstViolin", "SecondViolin", "Viola", "Cello", "Contrabass",
+        "Flute", "Oboe", "Clarinet", "Bassoon", "Horn", "Trumpet", "TromboneAndTuba", "Percussion", "HarpAndKeyboard","OtherInstruments", "Librarian" ];
+
+    private static Model Save(Model user)
+    {
+        var jsonData = JsonSerializer.Serialize(user);
+        File.WriteAllText($"{_folderPath}\\{user.PhoneNumber}.json", jsonData);
+        return user;
+    }
 
     public static Model? Get(string phoneNumber)
-    {
-        var user = UsersList.Find(x => x.PhoneNumber == phoneNumber);
-        return user;
-    }
+        => UsersList!.Find(x => x.PhoneNumber == phoneNumber);
 
     public static Model? Get(long id)
-    {
-        var user = UsersList.Find(x => x.Id == id);
-        return user;
-    }
+        => UsersList!.Find(x => x.Id == id);
 
-    public static Model? Add(string phoneNumber, string group)
-    {
-        var user = new Model() { PhoneNumber = phoneNumber, Group = group };
-
-        var jsonData = JsonSerializer.Serialize(user);
-        File.WriteAllText($"{_folderPath}\\{phoneNumber}.json", jsonData);
-        return user;
-    }
+    public static Model Add(string phoneNumber, string group)
+        => Save(new Model() { PhoneNumber = phoneNumber, Group = group })!;
 
     public static Model? EditId(string phoneNumber, long id)
     {
         var user = Get(phoneNumber);
         user.Id = id;
 
-        var jsonData = JsonSerializer.Serialize(user);
-        File.WriteAllText($"{_folderPath}\\{phoneNumber}.json", jsonData);
-        return user;
+        return Save(user);
     }
 
     public static Model? EditGroup(string phoneNumber, string group)
@@ -65,9 +57,7 @@ public static class User
         var user = Get(phoneNumber);
         user.Group = group;
 
-        var jsonData = JsonSerializer.Serialize(user);
-        File.WriteAllText($"{_folderPath}\\{phoneNumber}.json", jsonData);
-        return user;
+        return Save(user);
     }
 
     public static void Remove(string phoneNumber)
