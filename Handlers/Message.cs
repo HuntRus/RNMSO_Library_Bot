@@ -40,6 +40,10 @@ public static partial class Handlers
                 else if (message.Text == "/start")
                     await MenuAsync(bot, message);
             }
+            else if (userById != null && message.Text == "/start")
+            {
+                await MenuAsync(bot, message);
+            }
             else if (message.Text == "/start")
             {
                 await StartAsync(bot, message);

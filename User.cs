@@ -25,8 +25,46 @@ public static class User
         }
     }
 
-    public static readonly List<string> GroupList = [ "FirstViolin", "SecondViolin", "Viola", "Cello", "Contrabass",
-        "Flute", "Oboe", "Clarinet", "Bassoon", "Horn", "Trumpet", "TromboneAndTuba", "Percussion", "HarpAndKeyboard","OtherInstruments", "Librarian" ];
+    public static string GetGroupFromFilename(string filename)
+    {
+        var text = File.ReadAllText(Path.Combine(Environment.GetEnvironmentVariable("RNMSO_LIBRARY_BOT"), "groups.json"));
+        var groups = JsonSerializer.Deserialize<GroupMoudel>(text);
+
+        if (groups.FirstViolin.Contains(filename))
+            return "FirstViolin";
+        else if (groups.SecondViolin.Contains(filename))
+            return "SecondViolin";
+        else if (groups.Viola.Contains(filename))
+            return "Viola";
+        else if (groups.Cello.Contains(filename))
+            return "Cello";
+        else if (groups.Contrabass.Contains(filename))
+            return "Contrabass";
+        else if (groups.Flute.Contains(filename))
+            return "Flute";
+        else if (groups.Oboe.Contains(filename))
+            return "Oboe";
+        else if (groups.Clarinet.Contains(filename))
+            return "Clarinet";
+        else if (groups.Bassoon.Contains(filename))
+            return "Bassoon";
+        else if (groups.Horn.Contains(filename))
+            return "Horn";
+        else if (groups.Trumpet.Contains(filename))
+            return "Trumpet";
+        else if (groups.TromboneAndTuba.Contains(filename))
+            return "TromboneAndTuba";
+        else if (groups.Percussion.Contains(filename))
+            return "Percussion";
+        else if (groups.HarpAndKeyboard.Contains(filename))
+            return "HarpAndKeyboard";
+        else if (groups.OtherInstruments.Contains(filename))
+            return "OtherInstruments";
+        else if (groups.Librarian.Contains(filename))
+            return "Librarian";
+
+        return "Unauthorized";
+    }
 
     private static Model Save(Model user)
     {
@@ -66,6 +104,26 @@ public static class User
         if (user != null)
             File.Delete($"{_folderPath}\\{phoneNumber}.json");
     }
+
+    public class GroupMoudel
+    {
+        public List<string> FirstViolin { get; set; }
+        public List<string> SecondViolin { get; set; }
+        public List<string> Viola { get; set; }
+        public List<string> Cello { get; set; }
+        public List<string> Contrabass { get; set; }
+        public List<string> Flute { get; set; }
+        public List<string> Oboe{ get; set; }
+        public List<string> Clarinet { get; set; }
+        public List<string> Bassoon{ get; set; }
+        public List<string> Horn{ get; set; }
+        public List<string> Trumpet { get; set; }
+        public List<string> TromboneAndTuba{ get; set; }
+        public List<string> Percussion { get; set; }
+        public List<string> HarpAndKeyboard { get; set; }
+        public List<string> OtherInstruments { get; set; }
+        public List<string> Librarian { get; set; }
+}
 
     public class Model
     {

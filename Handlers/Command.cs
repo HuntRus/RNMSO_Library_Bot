@@ -45,8 +45,8 @@ public static partial class Handlers
             "Выберите месяц", ParseMode.Html,
             replyMarkup: new InlineKeyboardButton[][]
             {
-                [(currentMonthString, "CurrentMonth")],
-                [(nextMonthString, "NextMonth")]
+                [(currentMonthString, "currentMonth")],
+                [(nextMonthString, "nextMonth")]
             });
     }
 
@@ -70,11 +70,11 @@ public static partial class Handlers
                 "Необходимо вводить номер телефона <i>начиная с цифры 7 и без знака + перед ним: </i>" +
                 "<i>79123456789</i>", ParseMode.Html);
         }
-        else if (User.GroupList.Contains(arguments[2]) == false)
+/*        else if (User.GroupList.Contains(arguments[2]) == false)
         {
             await bot.SendMessage(message.Chat, "<b>Неверно указана группа</b>\n" +
                 "Ознакомиться с полным списком групп можно с помощью команды /start.", ParseMode.Html);
-        }
+        }*/
         else
         {
             User.Add(arguments[1], arguments[2]);
@@ -105,11 +105,11 @@ public static partial class Handlers
                 "Необходимо вводить номер телефона <i>начиная с цифры 7 и без знака + перед ним: </i>" +
                 "<i>79123456789</i>", ParseMode.Html);
         }
-        else if (User.GroupList.Contains(arguments[2]) == false)
+/*        else if (User.GroupList.Contains(arguments[2]) == false)
         {
             await bot.SendMessage(message.Chat, "<b>Неверно указана группа</b>\n" +
                 "Ознакомиться с полным списком групп можно с помощью команды /start.", ParseMode.Html);
-        }
+        }*/
         else
         {
             User.EditGroup(arguments[1], arguments[2]);
