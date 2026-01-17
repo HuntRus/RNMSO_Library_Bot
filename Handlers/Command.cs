@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using RNMSO_Library_Bot.Data;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -16,7 +16,6 @@ public static partial class Handlers
     /// </summary>
     /// <param name="bot">Current bot instance</param>
     /// <param name="message">Message being processed</param>
-    /// <returns></returns>
     public static async Task StartAsync(TelegramBotClient bot, Message message)
     {
         await bot.SendMessage(message.Chat,
@@ -30,13 +29,12 @@ public static partial class Handlers
     /// </summary>
     /// <param name="bot">Current bot instance</param>
     /// <param name="message">Message being processed</param>
-    /// <returns></returns>
     public static async Task MenuAsync(TelegramBotClient bot, Message message)
     {
         var now = DateTime.Now;
 
-        var currentMonth = now.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-ru"));
-        var nextMonth = now.AddMonths(1).ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-ru"));
+        var currentMonth = now.ToString("MMMM yyyy", Config.RegionalFormat);
+        var nextMonth = now.AddMonths(1).ToString("MMMM yyyy", Config.RegionalFormat);
 
         var currentMonthString = char.ToUpper(currentMonth[0]) + currentMonth[1..];
         var nextMonthString = char.ToUpper(nextMonth[0]) + nextMonth[1..];
@@ -77,7 +75,7 @@ public static partial class Handlers
         }*/
         else
         {
-            User.Add(arguments[1], arguments[2]);
+            Data.User.Create(arguments[1], arguments[2]);
 
             // check for null
 
@@ -112,7 +110,7 @@ public static partial class Handlers
         }*/
         else
         {
-            User.EditGroup(arguments[1], arguments[2]);
+            Data.User.EditGroup(arguments[1], arguments[2]);
 
             await bot.SendMessage(message.Chat, $"<b>Группа пользователя <code>{arguments[1]}</code> изменена.</b>", ParseMode.Html);
         }
@@ -141,7 +139,7 @@ public static partial class Handlers
         }
         else
         {
-            User.Remove(arguments[1]);
+            Data.User.Remove(arguments[1]);
 
             await bot.SendMessage(message.Chat, $"<b>Пользователь <code>{arguments[1]}</code> удален из базы.</b>", ParseMode.Html);
         }

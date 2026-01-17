@@ -1,4 +1,6 @@
-﻿namespace RNMSO_Library_Bot.Library;
+﻿using RNMSO_Library_Bot.Data.Models;
+
+namespace RNMSO_Library_Bot.Data;
 
 public static class Library
 {
@@ -8,10 +10,10 @@ public static class Library
         {
             var concerts = new List<Concert>();
 
-            var files = Directory.GetDirectories(Configuration.LibraryFolderPath);
+            var files = Directory.GetDirectories(Config.LibraryFolderPath);
             foreach (var file in files)
             {
-                var concert = new Concert(file) { Date = DateOnly.Parse(Path.GetFileName(file), Configuration.RegionalFormat) };
+                var concert = new Concert(file) { Date = DateOnly.Parse(Path.GetFileName(file), Config.RegionalFormat) };
                 concerts.Add(concert);
             }
 
