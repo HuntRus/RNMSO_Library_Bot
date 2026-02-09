@@ -3,7 +3,10 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-Properties/
+# Bot data
+Users/
+Library/
+config.json
 
 # dotenv files
 .env
