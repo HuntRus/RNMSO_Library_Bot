@@ -42,20 +42,22 @@ public class Composition(string filePath) : LibraryItem(filePath)
 
 public class Part(string filePath) : LibraryItem(filePath)
 {
-    public string Group
+    public string? Group
     {
         get
         {
-            var filename = FileName;
+            var filename = Path.GetFileNameWithoutExtension(FileName).
+                                Replace(" ", "").
+                                Replace(".", "").
+                                Replace("_", "");
+            
             int firstLength = 0;
-            for (var i = 0; char.IsLetter(filename[i]); i++) // end of filename limit
-            {
-                firstLength = i;
-            }
+            for (; !char.IsLetter(filename[firstLength]) && firstLength < filename.Length - 1; firstLength++) { }
 
             filename = filename[firstLength..];
-
-            return Data.Group.FindByAlias(filename).Name;
+            
+            var group = Data.Group.FindByAlias(filename);
+            return group?.Name;
         }
     }
 }

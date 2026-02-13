@@ -6,12 +6,12 @@ namespace RNMSO_Library_Bot.Data;
 
 public static class Config
 {
-    private static readonly string _filePath =
-        Path.Combine(Environment.GetEnvironmentVariable("RNMSO_LIBRARY_BOT"), "config.json");
-
-    public static string LibraryFolderPath => Path.Combine(Environment.GetEnvironmentVariable("RNMSO_LIBRARY_BOT"), "Library");
-    public static string UsersFolderPath => Path.Combine(Environment.GetEnvironmentVariable("RNMSO_LIBRARY_BOT"), "Users");
-    public static string GroupsFolderPath => Path.Combine(Environment.GetEnvironmentVariable("RNMSO_LIBRARY_BOT"), "Groups");
+    public static string MainFolderPath => Environment.CurrentDirectory;
+    public static string LibraryFolderPath => Path.Combine(MainFolderPath, "Library");
+    public static string UsersFolderPath => Path.Combine(MainFolderPath, "Users");
+    public static string GroupsFolderPath => Path.Combine(MainFolderPath, "Groups");
+ 
+    private static readonly string _filePath = Path.Combine(MainFolderPath, "config.json");
 
     public static DateTimeFormatInfo RegionalFormat => CultureInfo.GetCultureInfo("ru-ru").DateTimeFormat;
 

@@ -89,8 +89,10 @@ public static class User
         if (user is null)
             return null;
 
+        Group.RemoveMembers(user.Group, [user.PhoneNumber]);
         Remove(user.PhoneNumber);
         user.PhoneNumber = newPhoneNumber;
+        Group.AddMembers(user.Group, [user.PhoneNumber]);
         return Save(user);
     }
 
@@ -123,6 +125,7 @@ public static class User
         if (user is null)
             return false;
 
+        Group.RemoveMembers(user.Group, [user.PhoneNumber]);
         File.Delete($"{Config.UsersFolderPath}\\{user.PhoneNumber}.json");
         return true;
     }
@@ -138,6 +141,7 @@ public static class User
         if (user is null)
             return false;
 
+        Group.RemoveMembers(user.Group, [user.PhoneNumber]);
         File.Delete($"{Config.UsersFolderPath}\\{phoneNumber}.json");
         return true;
     }

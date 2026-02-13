@@ -4,20 +4,23 @@ namespace RNMSO_Library_Bot.Data;
 
 public static class Library
 {
-    public static List<Concert>? Concerts
+    public static List<Concert>? GetConcerts()
     {
-        get
+        var path = Config.LibraryFolderPath;
+        var list = new List<Concert>();
+
+        var source = Directory.GetDirectories(path);
+        foreach (var dir in source)
         {
-            var concerts = new List<Concert>();
-
-            var files = Directory.GetDirectories(Config.LibraryFolderPath);
-            foreach (var file in files)
-            {
-                var concert = new Concert(file) { Date = DateOnly.Parse(Path.GetFileName(file), Config.RegionalFormat) };
-                concerts.Add(concert);
-            }
-
-            return concerts;
+            var name = Path.GetFileName(dir);
+            var format = Config.RegionalFormat;
+            if (!DateOnly.TryParse(name, format, out DateOnly date))
+                continue;
+            
+            var concert = new Concert(dir) { Date = date };
+            list.Add(concert);
         }
+
+        return list;
     }
 }

@@ -6,6 +6,7 @@
 # Bot data
 Users/
 Library/
+Groups/
 config.json
 
 # dotenv files

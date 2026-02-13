@@ -17,17 +17,17 @@ public static partial class Handlers
             return;
 
         var query = update.CallbackQuery;
-        var user = Data.User.Find(query.From.Id);
-
-
-        if (query.Message is null)
+        if (query.Message == null || query.Data == null)
             return;
-        else if (user is null)
+
+        var user = Data.User.Find(query.From.Id);
+        if (user is null)
         {
             await bot.AnswerCallbackQuery(query.Id, "В доступе отказано");
             await bot.DeleteMessage(query.Message.Chat, query.Message.Id);
             return;
         }
+
         if (query.Data is "currentMonth" or "nextMonth")
             await AnswerMonthSelectionAsync(bot, query);
         else if (DateOnly.TryParse(query.Data, Config.RegionalFormat, out var date))
@@ -44,7 +44,7 @@ public static partial class Handlers
         if (query.Data is "nextMonth")
             date = date.AddMonths(1);
 
-        var concerts = Library.Concerts.FindAll(c => c.Date.Year == date.Year && c.Date.Month == date.Month);
+        var concerts = Library.GetConcerts().FindAll(c => c.Date.Year == date.Year && c.Date.Month == date.Month);
         if (concerts.Count is 0)
         {
             await bot.AnswerCallbackQuery(query.Id, $"Нет запланированных концертов на {date.ToString("MMMM", Config.RegionalFormat)}");
@@ -62,7 +62,7 @@ public static partial class Handlers
 
     private static async Task AnswerConcertSelectionAsync(TelegramBotClient bot, CallbackQuery query, DateOnly date)
     {
-        var concert = Library.Concerts.Find(c => c.Date == date);
+        var concert = Library.GetConcerts().Find(c => c.Date == date);
 
         var compositions = concert.Compositions;
         if (compositions.Count is 0)
@@ -103,7 +103,7 @@ public static partial class Handlers
             }
         }
 
-        var concert = Library.Concerts.Find(c => c.Date == date);
+        var concert = Library.GetConcerts().Find(c => c.Date == date);
         var composition = concert.Compositions.Find(c => c.FileName == title);
 
         await bot.EditMessageText(query.Message!.Chat, query.Message.Id, $"Дата: {date.ToString(Config.RegionalFormat)}\n" +
@@ -115,26 +115,15 @@ public static partial class Handlers
 
     private static async Task SendPartsAsync(TelegramBotClient bot, CallbackQuery query, Composition composition, string userGroup)
     {
-        var parts = composition.Parts;
+        var parts = composition.Parts.FindAll(p => p.Group == userGroup);
+    
+        if (parts == null)
+            return;
+           
         foreach (var part in parts)
         {
-            var name = part.FileName.Replace(" ", "");
-            name = name.Replace(".pdf", "");
-            name = name.Replace("-", "");
-            name = name.Replace(".", "");
-
-            int i = 0;
-            for (; char.IsDigit(name[i]); i++)
-            {
-            }
-            
-            name = name[i..];
-
-            if (Data.Group.FindByAlias(name).Name == userGroup)
-            {
-                await using Stream stream = File.OpenRead(part.FullPath);
-                await bot.SendDocument(query.Message.Chat, stream);
-            }
+            await using Stream stream = File.OpenRead(part.FullPath);
+            await bot.SendDocument(query.Message.Chat, stream);
         }
     }
 }
