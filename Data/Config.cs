@@ -4,24 +4,66 @@ using System.Text.Json;
 
 namespace RNMSO_Library_Bot.Data;
 
+/// <summary>
+/// Contains config properties.
+/// </summary>
 public static class Config
 {
-    public static string MainFolderPath => Environment.CurrentDirectory;
-    public static string LibraryFolderPath => Path.Combine(MainFolderPath, "Library");
-    public static string UsersFolderPath => Path.Combine(MainFolderPath, "Users");
-    public static string GroupsFolderPath => Path.Combine(MainFolderPath, "Groups");
- 
-    private static readonly string _filePath = Path.Combine(MainFolderPath, "config.json");
+    /// <inheritdoc cref="Models.ConfigModel.Token"/>
+    public static string Token => Model.Token;
 
-    public static DateTimeFormatInfo RegionalFormat => CultureInfo.GetCultureInfo("ru-ru").DateTimeFormat;
+    /// <summary>
+    /// Date format. Determines folders structure and bot's behaviour.
+    /// </summary>
+    public static DateTimeFormatInfo RegionalFormat => CultureInfo.GetCultureInfo(Model.RegionalFormat).DateTimeFormat;
 
-    public static string Token { get; }
+    /// <inheritdoc cref="ConfigModel.MainFolderPath"/>
+    public static string MainFolderPath => Model.MainFolderPath;
 
-    static Config()
+    /// <inheritdoc cref="ConfigModel.LibraryFolderPath"/>
+    public static string LibraryFolderPath => Model.LibraryFolderPath;
+
+    /// <inheritdoc cref="ConfigModel.UsersFolderPath"/>
+    public static string UsersFolderPath => Model.UsersFolderPath;
+
+    /// <inheritdoc cref="ConfigModel.GroupsFolderPath"/>
+    public static string GroupsFolderPath => Model.GroupsFolderPath;
+
+    /// <summary>
+    /// <see cref="ConfigModel"/> deserialized from config file.
+    /// </summary>
+    private static ConfigModel Model
     {
-        var file = File.ReadAllText(_filePath);
-        var configuration = JsonSerializer.Deserialize<ConfigModel>(file);
+        get
+        {
+            if (!File.Exists("config.json"))
+                return Generate();
 
-        Token = configuration!.Token;
+            var file = File.ReadAllText("config.json");
+            var config = JsonSerializer.Deserialize<ConfigModel>(file);
+            return config is null ? throw new NullReferenceException() : config;
+        }
+    }
+
+    /// <summary>
+    /// Generates default <see cref="ConfigModel"/>.
+    /// </summary>
+    /// <returns>Generated <see cref="ConfigModel"/>.</returns>
+    private static ConfigModel Generate()
+    {
+        var model = new ConfigModel()
+        {
+            Token = string.Empty,
+            RegionalFormat = "ru-ru",
+            MainFolderPath = Environment.CurrentDirectory,
+            LibraryFolderPath = Path.Combine(MainFolderPath, "Library"),
+            UsersFolderPath = Path.Combine(MainFolderPath, "Users"),
+            GroupsFolderPath = Path.Combine(MainFolderPath, "Groups")
+        };
+
+        var json = JsonSerializer.Serialize(model);
+        File.WriteAllText("config.json", json);
+
+        return model;
     }
 }
