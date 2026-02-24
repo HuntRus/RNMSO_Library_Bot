@@ -19,4 +19,9 @@ public class UserModel
     /// User's group name.
     /// </summary>
     public required string Group { get; set; }
+
+    /// <summary>
+    /// User's last message.
+    /// </summary>
+    public string LastMessage { get; set; } = string.Empty;
 }

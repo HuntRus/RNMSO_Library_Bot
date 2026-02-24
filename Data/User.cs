@@ -115,6 +115,22 @@ public static class User
     }
 
     /// <summary>
+    /// Changes user's last message in <see cref="Models.UserModel"/>.
+    /// </summary>
+    /// <param name="phoneNumber">User's phone number.</param>
+    /// <param name="message">User's last message.</param>
+    /// <returns>Updated <see cref="Models.UserModel"/> if last message was changed or <c>null</c> if wasn't.</returns>
+    public static UserModel? EditLastMessage(string phoneNumber, string message)
+    {
+        var user = Find(phoneNumber);
+        if (user is null)
+            return null;
+
+        user.LastMessage = message;
+        return Save(user);
+    }
+
+    /// <summary>
     /// Removes <see cref="Models.UserModel"/> with corresponding <paramref name="id"/>.
     /// </summary>
     /// <param name="id">User's id in Telegram.</param>
