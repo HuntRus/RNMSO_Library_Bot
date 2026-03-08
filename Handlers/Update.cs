@@ -1,5 +1,5 @@
-﻿using RNMSO_Library_Bot.Library;
-using System.Globalization;
+﻿using RNMSO_Library_Bot.Data;
+using RNMSO_Library_Bot.Data.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -17,11 +17,20 @@ public static partial class Handlers
             return;
 
         var query = update.CallbackQuery;
-        if (query.Message is null)
+        if (query.Message == null || query.Data == null)
             return;
+
+        var user = Data.User.Find(query.From.Id);
+        if (user is null)
+        {
+            await bot.AnswerCallbackQuery(query.Id, "В доступе отказано");
+            await bot.DeleteMessage(query.Message.Chat, query.Message.Id);
+            return;
+        }
+
         if (query.Data is "currentMonth" or "nextMonth")
             await AnswerMonthSelectionAsync(bot, query);
-        else if (DateOnly.TryParse(query.Data, Configuration.RegionalFormat, out var date))
+        else if (DateOnly.TryParse(query.Data, Config.RegionalFormat, out var date))
             await AnswerConcertSelectionAsync(bot, query, date);
         else if (query.Data.Split("\\").Length == 2)
             await AnswerCompositionSelectionAsync(bot, query);
@@ -35,17 +44,17 @@ public static partial class Handlers
         if (query.Data is "nextMonth")
             date = date.AddMonths(1);
 
-        var concerts = Library.Library.Concerts.FindAll(c => c.Date.Year == date.Year && c.Date.Month == date.Month);
+        var concerts = Library.GetConcerts().FindAll(c => c.Date.Year == date.Year && c.Date.Month == date.Month);
         if (concerts.Count is 0)
         {
-            await bot.SendMessage(query.Message.Chat, $"Нет запланированных концертов на {date.ToString("MMMM", Configuration.RegionalFormat)}.");
+            await bot.AnswerCallbackQuery(query.Id, $"Нет запланированных концертов на {date.ToString("MMMM", Config.RegionalFormat)}");
             return;
         }
 
         var markup = new InlineKeyboardMarkup();
         foreach (var concert in concerts)
         {
-            markup.AddButton(concert.Title).AddNewRow();
+            markup.AddButton(concert.FileName).AddNewRow();
         }
 
         await bot.EditMessageText(query.Message.Chat.Id, query.Message.Id, "Выберите дату концерта", replyMarkup: markup);
@@ -53,12 +62,12 @@ public static partial class Handlers
 
     private static async Task AnswerConcertSelectionAsync(TelegramBotClient bot, CallbackQuery query, DateOnly date)
     {
-        var concert = Library.Library.Concerts.Find(c => c.Date == date);
+        var concert = Library.GetConcerts().Find(c => c.Date == date);
 
         var compositions = concert.Compositions;
         if (compositions.Count is 0)
         {
-            await bot.SendMessage(query.Message!.Chat, $"Ноты произведений для концерта {date.ToString(Configuration.RegionalFormat)} ещё не загружены.");
+            await bot.AnswerCallbackQuery(query.Id, $"Ноты произведений для концерта {date.ToString(Config.RegionalFormat)} ещё не загружены");
             return;
         }
 
@@ -68,8 +77,8 @@ public static partial class Handlers
         var markup = new InlineKeyboardMarkup();
         for (var i = 0; i < compositions.Count; i++)
         {
-            text += $"{i + 1}. {compositions[i].Title}\n";
-            markup.AddButton($"{i + 1}".ToString(), $"{date.ToString(Configuration.RegionalFormat)}\\{ i + 1}").AddNewRow();
+            text += $"{i + 1}. {compositions[i].FileName}\n";
+            markup.AddButton($"{i + 1}".ToString(), $"{date.ToString(Config.RegionalFormat)}\\{ i + 1}").AddNewRow();
         }
 
         await bot.EditMessageText(query.Message!.Chat, query.Message.Id, text, replyMarkup: markup);
@@ -77,7 +86,7 @@ public static partial class Handlers
 
     private static async Task AnswerCompositionSelectionAsync(TelegramBotClient bot, CallbackQuery query)
     {
-        var date = DateOnly.Parse(query.Data.Split("\\")[0], Configuration.RegionalFormat);
+        var date = DateOnly.Parse(query.Data.Split("\\")[0], Config.RegionalFormat);
         var selection = query.Data.Split("\\")[1];
         var lines = query.Message.Text.Split("\n");
 
@@ -94,32 +103,27 @@ public static partial class Handlers
             }
         }
 
-        var concert = Library.Library.Concerts.Find(c => c.Date == date);
-        var composition = concert.Compositions.Find(c => c.Title == title);
+        var concert = Library.GetConcerts().Find(c => c.Date == date);
+        var composition = concert.Compositions.Find(c => c.FileName == title);
 
-        await bot.EditMessageText(query.Message!.Chat, query.Message.Id, $"Дата: {date.ToString(Configuration.RegionalFormat)}\n" +
+        await bot.EditMessageText(query.Message!.Chat, query.Message.Id, $"Дата: {date.ToString(Config.RegionalFormat)}\n" +
             $"Композиция: {title}\n\n" +
             $"Внимание! Файлы исчезнут через минуту после отправки.");
 
-        await SendPartsAsync(bot, query, composition, User.Get(query.From.Id).Group);
+        await SendPartsAsync(bot, query, composition, Data.User.Find(query.From.Id).Group);
     }
 
     private static async Task SendPartsAsync(TelegramBotClient bot, CallbackQuery query, Composition composition, string userGroup)
     {
-        var parts = composition.Parts;
+        var parts = composition.Parts.FindAll(p => p.Group == userGroup);
+    
+        if (parts == null)
+            return;
+           
         foreach (var part in parts)
         {
-            var name = part.Title.Replace(" ", "");
-            if (char.IsDigit(name[0]))
-                name = name[2..];
-
-            name = name.Replace(".pdf", "");
-
-            if (User.GetGroupFromFilename(name) == userGroup)
-            {
-                await using Stream stream = File.OpenRead(part.FilePath);
-                await bot.SendDocument(query.Message.Chat, stream);
-            }
+            await using Stream stream = File.OpenRead(part.FullPath);
+            await bot.SendDocument(query.Message.Chat, stream);
         }
     }
 }

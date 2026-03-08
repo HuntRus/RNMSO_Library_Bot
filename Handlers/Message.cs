@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using RNMSO_Library_Bot.Data;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -19,7 +20,7 @@ public static partial class Handlers
     public static async Task HandleMessageAsync(TelegramBotClient bot, Message message)
     {
         var id = message.From!.Id;
-        var userById = User.Get(id);
+        var userById = Data.User.Find(id);
 
         if (message.Text != null)
         {
@@ -52,13 +53,13 @@ public static partial class Handlers
         else if (message.Contact != null && userById == null)
         {
             var phoneNumber = message.Contact.PhoneNumber.StartsWith('+') ? message.Contact.PhoneNumber[1..] : message.Contact.PhoneNumber;
-            var userByNumber = User.Get(phoneNumber);
+            var userByNumber = Data.User.Find(phoneNumber);
 
             if (userByNumber != null)
             {
                 if (userByNumber.Id == default)
                 {
-                    User.EditId(phoneNumber, id);
+                    Data.User.EditId(phoneNumber, id);
                     await bot.SendMessage(message.Chat, "<b>Доступ предоставлен</b>\n" +
                         "Верификация пройдена, теперь вы можете воспользоваться функционалом чат-бота.\n", ParseMode.Html,
                         replyMarkup: new ReplyKeyboardRemove());
