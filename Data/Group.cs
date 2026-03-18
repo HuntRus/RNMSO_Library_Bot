@@ -140,7 +140,7 @@ public static class Group
     /// <returns>New or updated <see cref="Models.GroupModel"/>.</returns>
     private static GroupModel Save(GroupModel group)
     {
-        var jsonData = JsonSerializer.Serialize(group);
+        var jsonData = JsonSerializer.Serialize(group, Config.JsonOptions);
         File.WriteAllText($"{Config.GroupsFolderPath}\\{group.Name}.json", jsonData);
         return group;
     }

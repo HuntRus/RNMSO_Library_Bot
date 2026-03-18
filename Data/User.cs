@@ -169,7 +169,7 @@ public static class User
     /// <returns>New or updated <see cref="Models.UserModel"/>.</returns>
     private static UserModel Save(UserModel user)
     {
-        var jsonData = JsonSerializer.Serialize(user);
+        var jsonData = JsonSerializer.Serialize(user, Config.JsonOptions);
         File.WriteAllText($"{Config.UsersFolderPath}\\{user.PhoneNumber}.json", jsonData);
         return user;
     }

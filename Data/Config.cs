@@ -1,6 +1,9 @@
 ﻿using RNMSO_Library_Bot.Data.Models;
 using System.Globalization;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace RNMSO_Library_Bot.Data;
 
@@ -9,6 +12,15 @@ namespace RNMSO_Library_Bot.Data;
 /// </summary>
 public static class Config
 {
+    /// <summary>
+    /// Options for reading and writing JSON files.
+    /// </summary>
+    public static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+        WriteIndented = true
+    };
+
     /// <inheritdoc cref="Models.ConfigModel.Token"/>
     public static string Token => Model.Token;
 
@@ -61,7 +73,7 @@ public static class Config
             GroupsFolderPath = Path.Combine(MainFolderPath, "Groups")
         };
 
-        var json = JsonSerializer.Serialize(model);
+        var json = JsonSerializer.Serialize(model, JsonOptions);
         File.WriteAllText("config.json", json);
 
         return model;
